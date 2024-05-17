@@ -5,7 +5,7 @@ const Book = require("./models/Book");
 
 const app = express();
 
-mongoose.connect('mongodb+srv://johrackelboom:vCpouKW51nKvjk5x@cluster-first.wsmhmrt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster-first',
+,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true
