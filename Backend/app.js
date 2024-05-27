@@ -9,6 +9,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 const booksRoutes = require("./routes/books");
 const userRoutes = require("./routes/user")
+const dataRoutes = require("./routes/importData")
 
 mongoose.connect(MONGO_URI,
   { useNewUrlParser: true,
@@ -30,5 +31,6 @@ app.use(bodyParser.json());
 app.use("/api/books", booksRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
+app.use('/api/data', dataRoutes);
 
 module.exports = app;
