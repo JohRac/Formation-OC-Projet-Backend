@@ -68,3 +68,52 @@ exports.getAllBook = (req, res, next) => {
         .then(books => res.status(200).json(books))
         .catch(error => res.status(400).json({ error }));
 };
+
+exports.bestRatingBook = (req, res, next) => {
+    Book.find()
+        .sort({ averageRating: -1 })
+        .limit(3)
+        .then(books => {
+            if (books.length === 0) {
+                res.status(404).json({ message: "Aucun livre trouvé" })
+            } else {
+                res.status(200).json(books)
+            }
+        })
+        .catch(error => res.status(400).json({ error }));
+};
+
+
+exports.ratingBook = (req, res, next) => {
+    Book.findOne({ _id: req.params.id })
+        .then(book => {
+            if (book.ratings.userId == req.auth.userId) {
+                res.status(401).json({ message: "Vous avez déjà noté ce livre" })
+            }
+            else {
+                const bookNotation = {
+                    userId: req.auth.userId,
+                    rating: book.ratings.grade
+                }
+                const currentAverageRating = book.averageRating
+                const newAverageRating = calculateAverageRating(book.ratings.grade, currentAverageRating, book.ratings.length)
+                Book.updateOne({ _id: req.params.id }, { ...bookNotation, _id: req.params.id }, { averageRating: newAverageRating })
+                    .then(() => res.status(200).json({ message: "Livre noté !" }))
+                    .catch(error => res.status(400).json({ error }));
+            }
+        })
+        .catch(error => {
+            res.status(400).json({ error });
+        });
+};
+
+function calculateAverageRating(newNotation, currentAverageRating, numberOfNotations) {
+
+    const newNumberOfNotations = numberOfNotations + 1;
+
+    const newTotalRatingsSum = currentAverageRating * numberOfNotations + newNotation;
+
+    const newAverageRating = newTotalRatingsSum / newNumberOfNotations;
+
+    return newAverageRating;
+}
