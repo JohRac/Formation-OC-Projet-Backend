@@ -10,7 +10,6 @@ exports.createBook = (req, res, next) => {
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     });
-    console.log("File Name:", req.file.filename)
     book.save()
         .then(() => res.status(201).json({ message: "Livre enregistré !" }))
         .catch(error => res.status(400).json({ error }));
@@ -91,7 +90,7 @@ exports.ratingBook = (req, res, next) => {
         rating: req.body.rating
     }
 
-    Book.findOne({ _id: req.params.id })
+    Book.find()
         .then(book => {
             if (book) {
                 const userAlreadyRated = book.ratings.some(rating => rating.userId === req.auth.userId)
