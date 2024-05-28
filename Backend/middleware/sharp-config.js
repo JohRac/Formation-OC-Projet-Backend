@@ -3,13 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = async (req, res, next) => {
-    if (!req.file) {
-        return res.status(400).send('Pas de fichier reçu');
-    }
-
     try {
-        const filePath = path.join(__dirname, 'images', req.file.filename);
-        const outputFilePath = path.join(__dirname, 'images', `${req.file.filename.split('.')[0]}.webp`);
+        const filePath = path.join(__dirname, '../images', req.file.filename);
+        const outputFilePath = path.join(__dirname, '../images', `${req.file.filename.split('.')[0]}.webp`);
 
         await sharp(filePath)
             .webp({ quality: 80 })
