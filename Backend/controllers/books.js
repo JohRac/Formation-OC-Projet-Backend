@@ -32,7 +32,6 @@ exports.getAllBooks = (req, res, next) => {
 //POST
 
 exports.createBook = (req, res, next) => {
-    console.log("hello")
     const bookObject = JSON.parse(req.body.book);
     delete bookObject._id;
     delete bookObject._userId;
@@ -59,13 +58,13 @@ exports.ratingBook = (req, res, next) => {
                 if (userAlreadyRated) {
                     res.status(400).json({ message: "Vous avez déjà noté ce livre" })
                 } else {
-                    const currentAverageRating = book.averageRating
-                    const newAverageRating = calculateAverageRating(book.ratings.grade, currentAverageRating, book.ratings.length)
 
                     book.ratings.push(bookNotation)
-                    book.averageRating = newAverageRating
 
-                    Book.updateOne({ _id: req.params.id }, { ...bookNotation, _id: req.params.id }, { averageRating: newAverageRating })
+                    const newAverageRating = calculateAverageRating(book.ratings)
+
+                    book.averageRating = newAverageRating
+                    Book.updateOne({ _id: req.params.id }, book)
                         .then(() => res.status(200).json(book))
                         .catch(error => res.status(405).json({ error }));
                 }
@@ -78,9 +77,14 @@ exports.ratingBook = (req, res, next) => {
         });
 };
 
-function calculateAverageRating(newNotation, currentAverageRating, numberOfNotations) {
+function calculateAverageRating(notations) {
 
-    return (currentAverageRating * numberOfNotations + newNotation) / (numberOfNotations + 1)
+    let sum = 0
+    
+    notations.forEach(notation => {
+        sum += notation.grade})
+
+    return sum / notations.length
 }
 
 //PUT
