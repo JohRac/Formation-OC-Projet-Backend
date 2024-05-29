@@ -32,6 +32,7 @@ exports.getAllBooks = (req, res, next) => {
 //POST
 
 exports.createBook = (req, res, next) => {
+    console.log("hello")
     const bookObject = JSON.parse(req.body.book);
     delete bookObject._id;
     delete bookObject._userId;
@@ -48,10 +49,10 @@ exports.createBook = (req, res, next) => {
 exports.ratingBook = (req, res, next) => {
     const bookNotation = {
         userId: req.auth.userId,
-        rating: req.body.rating
+        grade: req.body.rating
     }
 
-    Book.find()
+    Book.findOne({ _id: req.params.id })
         .then(book => {
             if (book) {
                 const userAlreadyRated = book.ratings.some(rating => rating.userId === req.auth.userId)
@@ -65,15 +66,15 @@ exports.ratingBook = (req, res, next) => {
                     book.averageRating = newAverageRating
 
                     Book.updateOne({ _id: req.params.id }, { ...bookNotation, _id: req.params.id }, { averageRating: newAverageRating })
-                        .then(() => res.status(200).json({ message: "Livre noté !" }))
-                        .catch(error => res.status(400).json({ error }));
+                        .then(() => res.status(200).json(book))
+                        .catch(error => res.status(405).json({ error }));
                 }
             } else {
                 res.status(404).json({ message: "Livre introuvable" })
             }
         })
         .catch(error => {
-            res.status(400).json({ error });
+            res.status(410).json({ error });
         });
 };
 
@@ -85,11 +86,12 @@ function calculateAverageRating(newNotation, currentAverageRating, numberOfNotat
 //PUT
 
 exports.modifyBook = (req, res, next) => {
+    console.log("hello")
     const bookObject = req.file ? {
         ...JSON.parse(req.body.thing),
         imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     } : { ...req.body };
-
+    console.log("2eme")
     delete bookObject._userId;
     Book.findOne({ _id: req.params.id })
         .then((book) => {

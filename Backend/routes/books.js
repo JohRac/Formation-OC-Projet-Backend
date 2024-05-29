@@ -10,11 +10,13 @@ const booksCtrl = require("../controllers/books");
 router.get("/bestrating", booksCtrl.bestRatingBooks)
 router.get("/:id", booksCtrl.getOneBook);
 router.get("/", booksCtrl.getAllBooks);
+
 //POST
 router.post("/", auth, multer, sharp,  booksCtrl.createBook);
 router.post("/:id/rating", auth, booksCtrl.ratingBook)
 
 //PUT
+router.post("/:id", auth, multer, sharp,  booksCtrl.modifyBook);
 router.put("/:id", auth, multer, sharp,  booksCtrl.modifyBook);
 
 //DELETE
