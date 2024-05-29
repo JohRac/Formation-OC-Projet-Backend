@@ -66,21 +66,21 @@ exports.ratingBook = (req, res, next) => {
                     book.averageRating = newAverageRating
                     Book.updateOne({ _id: req.params.id }, book)
                         .then(() => res.status(200).json(book))
-                        .catch(error => res.status(405).json({ error }));
+                        .catch(error => res.status(400).json({ error }));
                 }
             } else {
                 res.status(404).json({ message: "Livre introuvable" })
             }
         })
         .catch(error => {
-            res.status(410).json({ error });
+            res.status(400).json({ error });
         });
 };
 
 function calculateAverageRating(notations) {
 
     let sum = 0
-    
+
     notations.forEach(notation => {
         sum += notation.grade})
 
