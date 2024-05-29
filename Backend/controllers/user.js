@@ -7,6 +7,8 @@ const User = require("../models/User")
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
+//POST
+
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
