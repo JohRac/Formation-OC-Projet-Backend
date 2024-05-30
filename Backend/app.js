@@ -5,13 +5,13 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
 
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URL = process.env.MONGO_URL;
 
 const booksRoutes = require("./routes/books");
 const userRoutes = require("./routes/user")
 const dataRoutes = require("./routes/importData")
 
-mongoose.connect(MONGO_URI,
+mongoose.connect(MONGO_URL,
   { useNewUrlParser: true,
     useUnifiedTopology: true,})
   .then(() => console.log("Connexion à MongoDB réussie !"))
