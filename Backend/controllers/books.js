@@ -91,8 +91,6 @@ function calculateAverageRating(notations) {
 //PUT
 
 exports.modifyBook = (req, res, next) => {
-    console.log("req.file:", req.file);
-    console.log("req.body.book:", req.body.book);
 
     let bookObject;
     if (req.file) {
@@ -100,8 +98,6 @@ exports.modifyBook = (req, res, next) => {
             ...JSON.parse(req.body.book),
             imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
         };
-    } else if (req.body.book) {
-        bookObject = JSON.parse(req.body.book);
     } else {
         bookObject = { ...req.body }; 
     }
