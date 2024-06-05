@@ -82,7 +82,8 @@ function calculateAverageRating(notations) {
     let sum = 0
 
     notations.forEach(notation => {
-        sum += notation.grade})
+        sum += notation.grade
+    })
 
     return sum / notations.length
 }
@@ -90,19 +91,29 @@ function calculateAverageRating(notations) {
 //PUT
 
 exports.modifyBook = (req, res, next) => {
-    console.log("hello")
-    const bookObject = req.file ? {
-        ...JSON.parse(req.body.thing),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-    } : { ...req.body };
-    console.log("2eme")
+    console.log("req.file:", req.file);
+    console.log("req.body.book:", req.body.book);
+
+    let bookObject;
+    if (req.file) {
+        bookObject = {
+            ...JSON.parse(req.body.book),
+            imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+        };
+    } else if (req.body.book) {
+        bookObject = JSON.parse(req.body.book);
+    } else {
+        bookObject = { ...req.body }; 
+    }
+
     delete bookObject._userId;
+
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (book.userId != req.auth.userId) {
                 res.status(403).json({ message: "Non-Autorisé" });
             } else {
-                Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
+                Book.updateOne({ _id: req.params.id }, { $set: bookObject })
                     .then(() => res.status(200).json({ message: "Livre modifié !" }))
                     .catch(error => res.status(400).json({ error }));
             }
@@ -110,7 +121,6 @@ exports.modifyBook = (req, res, next) => {
         .catch((error) => {
             res.status(400).json({ error });
         });
-
 };
 
 //DELETE

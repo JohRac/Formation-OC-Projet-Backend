@@ -27,6 +27,7 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/books", booksRoutes);
 app.use("/api/auth", userRoutes);
